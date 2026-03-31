@@ -1,0 +1,775 @@
+{
+  "tables": {
+    "account_audit_logs": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "account_id uuid not null",
+        "event text not null",
+        "actor_id uuid",
+        "metadata jsonb",
+        "created_at timestamp with time zone default now()"
+      ]
+    },
+    "account_business_profiles": {
+      "columns": [
+        "account_id uuid not null",
+        "legal_name text",
+        "registration_number text",
+        "tax_id text",
+        "support_email text",
+        "support_phone text",
+        "registered_address_id uuid",
+        "created_at timestamp with time zone default now()",
+        "updated_at timestamp with time zone default now()"
+      ]
+    },
+    "account_kyc_documents": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "account_id uuid not null",
+        "document_type text not null",
+        "document_url text not null",
+        "verification_status text not null default 'PENDING'::text",
+        "uploaded_at timestamp with time zone default now()",
+        "verified_at timestamp with time zone",
+        "rejected_reason text",
+        "verified_by uuid",
+        "created_at timestamp with time zone default now()"
+      ]
+    },
+    "account_members": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "account_id uuid not null",
+        "user_id uuid not null",
+        "role text not null",
+        "status text not null default 'ACTIVE'::text",
+        "joined_at timestamp with time zone default now()"
+      ]
+    },
+    "account_partners": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "host_account_id uuid not null",
+        "partner_account_id uuid not null",
+        "commission_rate numeric(52) not null default 0,",
+        "status text not null default 'ACTIVE'::text",
+        "created_at timestamp with time zone default now()"
+      ]
+    },
+    "account_payout_profiles": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "account_id uuid not null",
+        "account_holder_name text not null",
+        "bank_name text not null",
+        "account_number text not null",
+        "ifsc_code text not null",
+        "currency text not null default 'INR'::text",
+        "is_active boolean not null default true",
+        "verification_status text not null default 'PENDING'::text",
+        "created_at timestamp with time zone default now()",
+        "verified_at timestamp with time zone"
+      ]
+    },
+    "account_subscriptions": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "account_id uuid not null",
+        "plan_id uuid not null",
+        "billing_cycle text not null default 'MONTHLY'::text",
+        "status text not null default 'ACTIVE'::text",
+        "started_at timestamp with time zone default now()",
+        "expires_at timestamp with time zone",
+        "created_at timestamp with time zone default now()"
+      ]
+    },
+    "accounts": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "name text not null",
+        "slug text not null",
+        "type text not null",
+        "status text not null default 'PENDING_COMPLIENCE'::text",
+        "country text not null default 'India'::text",
+        "created_at timestamp with time zone not null default now()"
+      ]
+    },
+    "addresses": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "country text not null",
+        "state text not null",
+        "district text",
+        "city text",
+        "locality text",
+        "postal_code text",
+        "line1 text",
+        "line2 text",
+        "latitude numeric(96),",
+        "longitude numeric(96),",
+        "created_at timestamp with time zone default now()",
+        "location extensions.geography(Point4326),",
+        "created_by uuid",
+        "g_place_id text",
+        "google_place_types text[]",
+        "label text"
+      ]
+    },
+    "amenity_catalog": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "key text not null",
+        "name text not null",
+        "description text",
+        "created_at timestamp with time zone default now()",
+        "category text",
+        "icon text",
+        "applies_to text"
+      ]
+    },
+    "cancellation_policies": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "property_id uuid not null",
+        "name text not null",
+        "policy_type text not null",
+        "full_refund_days integer not null",
+        "partial_refund_start integer",
+        "partial_refund_end integer",
+        "partial_refund_percent integer",
+        "advance_percent integer not null default 30",
+        "advance_non_refundable boolean default false",
+        "created_at timestamp with time zone default now()"
+      ]
+    },
+    "entity_rules": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "entity_type text not null",
+        "entity_id uuid not null",
+        "rule_id uuid not null",
+        "is_enabled boolean default true",
+        "value_override jsonb",
+        "custom_text text",
+        "created_at timestamp with time zone default now()"
+      ]
+    },
+    "experience_properties": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "experience_id uuid not null",
+        "property_id uuid not null",
+        "created_at timestamp with time zone default now()"
+      ]
+    },
+    "experience_units": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "experience_id uuid not null",
+        "unit_id uuid not null",
+        "role text",
+        "created_at timestamp with time zone default now()"
+      ]
+    },
+    "experiences": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "host_account_id uuid not null",
+        "title text not null",
+        "description text",
+        "duration_minutes integer",
+        "experience_type text",
+        "status text default 'DRAFT'::text",
+        "created_at timestamp with time zone default now()"
+      ]
+    },
+    "facility_catalog": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "key text not null",
+        "name text not null",
+        "description text",
+        "created_at timestamp with time zone default now()",
+        "icon text",
+        "category text",
+        "is_popular boolean default false",
+        "sort_order integer default 0"
+      ]
+    },
+    "media_assets": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "account_id uuid not null",
+        "url text not null",
+        "media_type text not null",
+        "size_bytes bigint",
+        "created_at timestamp with time zone default now()"
+      ]
+    },
+    "media_links": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "media_id uuid not null",
+        "entity_type text not null",
+        "entity_id uuid not null",
+        "sort_order integer default 0",
+        "created_at timestamp with time zone default now()"
+      ]
+    },
+    "plan_limits": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "plan_id uuid not null",
+        "feature_key text not null",
+        "feature_value text not null"
+      ]
+    },
+    "properties": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "account_id uuid not null",
+        "address_id uuid not null",
+        "name text not null",
+        "slug text not null",
+        "google_place_types text[] default '{}'::text[]",
+        "status text not null default 'DRAFT'::text",
+        "description text",
+        "location extensions.geography(Point4326),",
+        "created_at timestamp with time zone default now()",
+        "updated_at timestamp with time zone default now()",
+        "google_place_id text",
+        "has_google_place boolean default false",
+        "created_by uuid",
+        "listing_source text",
+        "ownership_status text default 'OWNED'::text",
+        "creation_step smallint default 0",
+        "canonical_property_id uuid",
+        "deleted_at timestamp with time zone",
+        "is_google_business boolean default false",
+        "metadata jsonb default '{}'::jsonb"
+      ]
+    },
+    "property_addons": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "property_id uuid not null",
+        "name text not null",
+        "description text",
+        "addon_type text not null",
+        "pricing_type text not null",
+        "status text not null default 'DRAFT'::text",
+        "created_by uuid",
+        "created_at timestamp with time zone default now()",
+        "updated_at timestamp with time zone default now()"
+      ]
+    },
+    "property_claims": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "property_id uuid",
+        "user_id uuid",
+        "status text",
+        "created_at timestamp with time zone default now()",
+        "resolved_at timestamp with time zone",
+        "resolved_by uuid"
+      ]
+    },
+    "property_facilities": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "property_id uuid not null",
+        "facility_id uuid not null",
+        "created_at timestamp with time zone default now()"
+      ]
+    },
+    "property_google_data": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "property_id uuid",
+        "google_place_id text not null",
+        "name text",
+        "formatted_address text",
+        "latitude double precision",
+        "longitude double precision",
+        "rating numeric",
+        "user_ratings_total integer",
+        "types text[]",
+        "raw jsonb",
+        "last_synced_at timestamp with time zone default now()",
+        "created_at timestamp with time zone default now()"
+      ]
+    },
+    "property_members": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "property_id uuid not null",
+        "user_id uuid not null",
+        "role text not null",
+        "status text not null default 'ACTIVE'::text",
+        "joined_at timestamp with time zone default now()"
+      ]
+    },
+    "property_seasons": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "property_id uuid not null",
+        "season text not null",
+        "highlight text",
+        "created_at timestamp with time zone default now()",
+        "tags text[]",
+        "notes text",
+        "image text"
+      ]
+    },
+    "property_terrains": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "property_id uuid not null",
+        "terrain_id uuid not null",
+        "created_at timestamp with time zone default now()"
+      ]
+    },
+    "property_transfers": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "property_id uuid not null",
+        "from_account_id uuid not null",
+        "to_account_id uuid not null",
+        "initiated_by uuid not null",
+        "accepted_by uuid",
+        "status text not null",
+        "reason text",
+        "created_at timestamp with time zone default now()",
+        "completed_at timestamp with time zone"
+      ]
+    },
+    "property_transport_hubs": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "property_id uuid not null",
+        "hub_type text not null",
+        "name text not null",
+        "distance_km numeric(62),",
+        "travel_time_minutes integer",
+        "notes text",
+        "created_at timestamp with time zone default now()"
+      ]
+    },
+    "property_units": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "property_id uuid not null",
+        "name text not null",
+        "unit_count integer",
+        "description text",
+        "status text not null default 'ACTIVE'::text",
+        "created_at timestamp with time zone default now()",
+        "updated_at timestamp with time zone default now()",
+        "unit_type_id uuid not null",
+        "is_sleep_enabled boolean default true",
+        "is_bookable boolean default true"
+      ]
+    },
+    "property_verifications": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "property_id uuid not null",
+        "verification_status text not null",
+        "verified_by uuid",
+        "notes text",
+        "verified_at timestamp with time zone",
+        "created_at timestamp with time zone default now()"
+      ]
+    },
+    "rule_categories": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "name text not null",
+        "description text",
+        "created_at timestamp with time zone default now()"
+      ]
+    },
+    "rule_templates": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "name text not null",
+        "description text",
+        "applies_to text not null",
+        "created_at timestamp with time zone default now()"
+      ]
+    },
+    "rules": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "category_id uuid not null",
+        "key text not null",
+        "label text not null",
+        "type text not null",
+        "default_value jsonb",
+        "description text",
+        "is_locked boolean default false",
+        "created_at timestamp with time zone default now()"
+      ]
+    },
+    "subscription_plans": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "name text not null",
+        "description text",
+        "monthly_price numeric(102) default 0,",
+        "yearly_price numeric(102) default 0,",
+        "currency text default 'INR'::text",
+        "is_active boolean default true",
+        "created_at timestamp with time zone default now()"
+      ]
+    },
+    "template_rules": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "template_id uuid not null",
+        "rule_id uuid not null",
+        "is_enabled boolean default true",
+        "default_value jsonb",
+        "custom_text text",
+        "created_at timestamp with time zone default now()"
+      ]
+    },
+    "terrain_catalog": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "name text not null",
+        "description text",
+        "icon text",
+        "created_at timestamp with time zone default now()"
+      ]
+    },
+    "unit_amenities": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "unit_id uuid not null",
+        "amenity_id uuid not null",
+        "created_at timestamp with time zone default now()"
+      ]
+    },
+    "unit_availability_exceptions": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "unit_id uuid not null",
+        "date date not null",
+        "open_time time without time zone",
+        "close_time time without time zone",
+        "is_closed boolean default false",
+        "created_at timestamp with time zone default now()"
+      ]
+    },
+    "unit_availability_schedules": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "unit_id uuid not null",
+        "day_of_week integer not null",
+        "open_time time without time zone not null",
+        "close_time time without time zone not null",
+        "is_closed boolean default false",
+        "created_at timestamp with time zone default now()"
+      ]
+    },
+    "unit_cancellation_policies": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "unit_id uuid not null",
+        "policy_id uuid not null",
+        "created_at timestamp with time zone default now()"
+      ]
+    },
+    "unit_categories": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "key text not null",
+        "name text not null",
+        "description text",
+        "image_url text",
+        "created_at timestamp with time zone default now()"
+      ]
+    },
+    "unit_context": {
+      "columns": [
+        "unit_id uuid not null",
+        "primary_intent text",
+        "usage_mode text",
+        "space_shape text",
+        "sleep_distribution text",
+        "bathroom_distribution text",
+        "kitchen_model text",
+        "access_model text",
+        "availability_model text",
+        "privacy_model text",
+        "experience_type text",
+        "is_composable boolean default false",
+        "is_primary_unit boolean default true",
+        "created_at timestamp with time zone default now()"
+      ]
+    },
+    "unit_food_options": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "unit_id uuid not null",
+        "meal_types text[] not null",
+        "is_included boolean not null default true",
+        "serving_types text[]",
+        "created_at timestamp with time zone default now()"
+      ]
+    },
+    "unit_pricing_components": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "pricing_plan_id uuid not null",
+        "component_type text not null",
+        "label text",
+        "price numeric not null",
+        "metadata jsonb",
+        "created_at timestamp with time zone default now()"
+      ]
+    },
+    "unit_pricing_plans": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "unit_id uuid not null",
+        "name text not null",
+        "pricing_model text not null",
+        "currency text not null default 'INR'::text",
+        "is_default boolean not null default false",
+        "is_active boolean not null default true",
+        "start_date date",
+        "end_date date",
+        "created_at timestamp with time zone default now()",
+        "is_food_included boolean not null default false",
+        "pricing_behavior text"
+      ]
+    },
+    "unit_space_configs": {
+      "columns": [
+        "unit_id uuid not null",
+        "opens_at time without time zone",
+        "closes_at time without time zone",
+        "min_hours integer default 1",
+        "max_capacity integer",
+        "created_at timestamp with time zone default now()",
+        "usage_type text"
+      ]
+    },
+    "unit_stay_configs": {
+      "columns": [
+        "unit_id uuid not null",
+        "check_in_time time without time zone",
+        "check_out_time time without time zone",
+        "min_nights integer default 1",
+        "max_nights integer",
+        "max_guests integer",
+        "created_at timestamp with time zone default now()"
+      ]
+    },
+    "unit_type_catalog": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "category_id uuid not null",
+        "key text not null",
+        "name text not null",
+        "description text",
+        "image_url text",
+        "booking_mode text not null",
+        "created_at timestamp with time zone default now()"
+      ]
+    },
+    "unit_types": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "key text not null",
+        "label text not null",
+        "description text",
+        "created_at timestamp with time zone default now()",
+        "default_intent text",
+        "default_space_shape text",
+        "default_sleep_distribution text"
+      ]
+    },
+    "user_profiles": {
+      "columns": [
+        "user_id uuid not null",
+        "full_name text not null",
+        "about text",
+        "languages text[]",
+        "alternative_phone text",
+        "user_type text[]",
+        "app_source text",
+        "updated_at timestamp with time zone not null default now()",
+        "avatar character varying"
+      ]
+    },
+    "users": {
+      "columns": [
+        "id uuid not null default gen_random_uuid()",
+        "firebase_uid text not null",
+        "email text not null",
+        "phone text not null",
+        "phone_verified boolean not null default false",
+        "created_at timestamp with time zone not null default now()"
+      ]
+    }
+  },
+  "functions": {
+    "account_created_trigger": {
+      "name": "account_created_trigger"
+    },
+    "activate_account_if_compliant": {
+      "name": "activate_account_if_compliant"
+    },
+    "assign_default_subscription": {
+      "name": "assign_default_subscription"
+    },
+    "audit_account_created": {
+      "name": "audit_account_created"
+    },
+    "audit_trigger_function": {
+      "name": "audit_trigger_function"
+    },
+    "check_account_compliance": {
+      "name": "check_account_compliance"
+    },
+    "check_duplicate_property": {
+      "name": "check_duplicate_property"
+    },
+    "claim_property": {
+      "name": "claim_property"
+    },
+    "create_default_subscription": {
+      "name": "create_default_subscription"
+    },
+    "create_or_get_property": {
+      "name": "create_or_get_property"
+    },
+    "create_property_with_address": {
+      "name": "create_property_with_address"
+    },
+    "ensure_account_has_host": {
+      "name": "ensure_account_has_host"
+    },
+    "handle_address_geography": {
+      "name": "handle_address_geography"
+    },
+    "kyc_verified_trigger": {
+      "name": "kyc_verified_trigger"
+    },
+    "log_account_event": {
+      "name": "log_account_event"
+    },
+    "payout_verified_trigger": {
+      "name": "payout_verified_trigger"
+    },
+    "prevent_account_status_change": {
+      "name": "prevent_account_status_change"
+    },
+    "prevent_host_deletion": {
+      "name": "prevent_host_deletion"
+    },
+    "prevent_host_role_update": {
+      "name": "prevent_host_role_update"
+    },
+    "prevent_owner_delete": {
+      "name": "prevent_owner_delete"
+    },
+    "prevent_owner_removal": {
+      "name": "prevent_owner_removal"
+    },
+    "prevent_owner_role_update": {
+      "name": "prevent_owner_role_update"
+    },
+    "prevent_suspend_with_bookings": {
+      "name": "prevent_suspend_with_bookings"
+    },
+    "request_property_access": {
+      "name": "request_property_access"
+    },
+    "reset_dev_data": {
+      "name": "reset_dev_data"
+    },
+    "rls_auto_enable": {
+      "name": "rls_auto_enable"
+    },
+    "seed_property_rules": {
+      "name": "seed_property_rules"
+    },
+    "sync_account_owner": {
+      "name": "sync_account_owner"
+    },
+    "sync_property_location": {
+      "name": "sync_property_location"
+    },
+    "transfer_account_ownership": {
+      "name": "transfer_account_ownership"
+    },
+    "update_address_location": {
+      "name": "update_address_location"
+    },
+    "update_timestamp": {
+      "name": "update_timestamp"
+    }
+  },
+  "triggers": [
+    {
+      "table": "account_kyc_documents",
+      "function": "kyc_verified_trigger",
+      "timing": "AFTER UPDATE"
+    },
+    {
+      "table": "account_members",
+      "function": "prevent_owner_delete",
+      "timing": "BEFORE DELETE"
+    },
+    {
+      "table": "account_members",
+      "function": "prevent_owner_role_update",
+      "timing": "BEFORE UPDATE"
+    },
+    {
+      "table": "account_payout_profiles",
+      "function": "payout_verified_trigger",
+      "timing": "AFTER UPDATE"
+    },
+    {
+      "table": "accounts",
+      "function": "account_created_trigger",
+      "timing": "AFTER INSERT"
+    },
+    {
+      "table": "accounts",
+      "function": "audit_account_created",
+      "timing": "AFTER INSERT"
+    },
+    {
+      "table": "accounts",
+      "function": "assign_default_subscription",
+      "timing": "AFTER INSERT"
+    },
+    {
+      "table": "addresses",
+      "function": "handle_address_geography",
+      "timing": "BEFORE INSERT"
+    },
+    {
+      "table": "addresses",
+      "function": "update_address_location",
+      "timing": "BEFORE INSERT"
+    },
+    {
+      "table": "properties",
+      "function": "sync_property_location",
+      "timing": "BEFORE INSERT"
+    },
+    {
+      "table": "user_profiles",
+      "function": "update_timestamp",
+      "timing": "BEFORE UPDATE"
+    }
+  ]
+}

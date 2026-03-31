@@ -1,0 +1,146 @@
+{
+  "accounts": {
+    "tables": [
+      "account_audit_logs",
+      "account_business_profiles",
+      "account_kyc_documents",
+      "account_members",
+      "account_partners",
+      "account_payout_profiles",
+      "account_subscriptions",
+      "accounts"
+    ],
+    "triggers": [
+      {
+        "table": "account_kyc_documents",
+        "function": "kyc_verified_trigger",
+        "timing": "AFTER UPDATE"
+      },
+      {
+        "table": "account_members",
+        "function": "prevent_owner_delete",
+        "timing": "BEFORE DELETE"
+      },
+      {
+        "table": "account_members",
+        "function": "prevent_owner_role_update",
+        "timing": "BEFORE UPDATE"
+      },
+      {
+        "table": "account_payout_profiles",
+        "function": "payout_verified_trigger",
+        "timing": "AFTER UPDATE"
+      },
+      {
+        "table": "accounts",
+        "function": "account_created_trigger",
+        "timing": "AFTER INSERT"
+      },
+      {
+        "table": "accounts",
+        "function": "audit_account_created",
+        "timing": "AFTER INSERT"
+      },
+      {
+        "table": "accounts",
+        "function": "assign_default_subscription",
+        "timing": "AFTER INSERT"
+      }
+    ]
+  },
+  "misc": {
+    "tables": [
+      "addresses",
+      "amenity_catalog",
+      "cancellation_policies",
+      "facility_catalog",
+      "plan_limits",
+      "properties",
+      "subscription_plans",
+      "terrain_catalog",
+      "user_profiles",
+      "users"
+    ],
+    "triggers": [
+      {
+        "table": "addresses",
+        "function": "handle_address_geography",
+        "timing": "BEFORE INSERT"
+      },
+      {
+        "table": "addresses",
+        "function": "update_address_location",
+        "timing": "BEFORE INSERT"
+      },
+      {
+        "table": "properties",
+        "function": "sync_property_location",
+        "timing": "BEFORE INSERT"
+      },
+      {
+        "table": "user_profiles",
+        "function": "update_timestamp",
+        "timing": "BEFORE UPDATE"
+      }
+    ]
+  },
+  "rules": {
+    "tables": [
+      "entity_rules",
+      "rule_categories",
+      "rule_templates",
+      "rules",
+      "template_rules"
+    ],
+    "triggers": []
+  },
+  "experiences": {
+    "tables": [
+      "experience_properties",
+      "experience_units",
+      "experiences"
+    ],
+    "triggers": []
+  },
+  "media": {
+    "tables": [
+      "media_assets",
+      "media_links"
+    ],
+    "triggers": []
+  },
+  "properties": {
+    "tables": [
+      "property_addons",
+      "property_claims",
+      "property_facilities",
+      "property_google_data",
+      "property_members",
+      "property_seasons",
+      "property_terrains",
+      "property_transfers",
+      "property_transport_hubs",
+      "property_units",
+      "property_verifications"
+    ],
+    "triggers": []
+  },
+  "units": {
+    "tables": [
+      "unit_amenities",
+      "unit_availability_exceptions",
+      "unit_availability_schedules",
+      "unit_cancellation_policies",
+      "unit_categories",
+      "unit_context",
+      "unit_food_options",
+      "unit_pricing_components",
+      "unit_pricing_plans",
+      "unit_space_configs",
+      "unit_stay_configs",
+      "unit_type_catalog",
+      "unit_types"
+    ],
+    "triggers": []
+  }
+}
