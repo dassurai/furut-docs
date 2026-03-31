@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "🔄 Pulling latest DB schema..."
-supabase db pull
+supabase db pull --db-url "$DB_URL"
 
 echo "🧠 Generating JSON..."
 node scripts/generate-json.js
