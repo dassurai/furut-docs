@@ -16,3 +16,6 @@ echo "⚙️ Generating internals..."
 node scripts/generate-internals.js
 
 echo "✅ Docs fully updated!"
+
+echo "⚡ Generating flows..."
+node scripts/generate-flows.js
