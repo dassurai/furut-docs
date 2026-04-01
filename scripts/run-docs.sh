@@ -15,7 +15,10 @@ node scripts/generate-docs-from-systems.js
 echo "⚙️ Generating internals..."
 node scripts/generate-internals.js
 
-echo "✅ Docs fully updated!"
+echo "🧠 Generating flows (intelligence)..."
+node scripts/generate-flows-v7.js
 
-echo "⚡ Generating flows..."
-node scripts/generate-flows.js
+echo "✨ Generating readable flows..."
+node scripts/generate-flows-readable.js
+
+echo "✅ Docs fully updated!"

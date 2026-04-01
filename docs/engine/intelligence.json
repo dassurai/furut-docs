@@ -1,0 +1,42 @@
+{
+  "groups": {
+    "account": ["account_*"],
+    "property": ["property_*"],
+    "unit": ["unit_*"],
+    "experience": ["experience_*"],
+    "user": ["user_*", "users"],
+    "media": ["media_*"],
+    "rule": ["rule_*", "*rules*"],
+    "location": ["address*"],
+    "billing": ["*subscription*", "*plan*"]
+  },
+
+  "function_meanings": {
+    "assign": "Assign related data",
+    "audit": "Log system event",
+    "create": "Create related entity",
+    "update": "Update related data",
+    "verify": "Verify data",
+    "kyc": "Verify identity",
+    "payout": "Process payout verification",
+    "prevent": "Block restricted action",
+    "sync": "Sync system data",
+    "transfer": "Transfer ownership",
+    "claim": "Process claim request",
+    "timestamp": "Update timestamp"
+  },
+
+  "flow_start_patterns": {
+    "INSERT": "New entity is created",
+    "UPDATE": "Data is updated",
+    "DELETE": "Deletion is attempted"
+  },
+  
+  "function_effects": {
+  "kyc_verified_trigger": "accounts",
+  "payout_verified_trigger": "accounts",
+  "assign_default_subscription": "account_subscriptions",
+  "sync_property_location": "properties",
+  "update_address_location": "addresses"
+}
+}
